@@ -21,3 +21,15 @@ def create_booking():
     db.session.commit()
 
     return jsonify(booking.serialize()), 201
+
+
+
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+@booking_bp.route("/my-bookings", methods=["GET"])
+@jwt_required()
+def get_my_bookings():
+    identity = get_jwt_identity()
+    user_id = identity["id"]
+    bookings = Booking.query.filter_by(user_id=user_id).all()
+    return jsonify([b.serialize() for b in bookings])
