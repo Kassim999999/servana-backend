@@ -29,3 +29,27 @@ class Service(db.Model):
             "price": self.price,
             "icon": self.icon,
         }
+
+
+
+class Booking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    service_id = db.Column(db.Integer, db.ForeignKey("service.id"), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    date = db.Column(db.String(50), nullable=False)
+    notes = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    service = db.relationship("Service", backref="bookings")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "service": self.service.name if self.service else None,
+            "name": self.name,
+            "phone": self.phone,
+            "date": self.date,
+            "notes": self.notes,
+            "created_at": self.created_at.isoformat()
+        }

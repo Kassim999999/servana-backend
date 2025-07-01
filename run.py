@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import User, Service
+from app.models import User, Service, Booking
 
 
 
