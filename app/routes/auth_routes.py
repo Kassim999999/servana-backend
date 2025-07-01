@@ -22,8 +22,8 @@ def login():
     user = User.query.filter_by(email=data["email"]).first()
     if not user or not check_password_hash(user.password, data["password"]):
         return jsonify(msg="Invalid credentials"), 401
-    token = create_access_token(identity={"id": user.id, "email": user.email})
-    return jsonify(token=token, user={"id": user.id, "name": user.full_name}), 200
+    token = create_access_token(identity={"id": user.id, "email": user.email, "is_admin": user.is_admin})
+    return jsonify(token=token, user={"id": user.id, "name": user.full_name, "is_admin": user.is_admin}), 200
 
 @auth_bp.route("/me", methods=["GET"])
 @jwt_required()
