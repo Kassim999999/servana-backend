@@ -1,3 +1,4 @@
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import Blueprint, request, jsonify
 from app.models import db, Booking, Service
 
@@ -23,8 +24,19 @@ def create_booking():
     return jsonify(booking.serialize()), 201
 
 
+@booking_bp.route("/bookings", methods=["GET"])
+@jwt_required()
+def all_bookings():
+    identity = get_jwt_identity()
+    user = User.query.get(identity["id"])
 
-from flask_jwt_extended import jwt_required, get_jwt_identity
+    if not user or not user.is_admin:
+        return jsonify({"error": "Admins only"}), 403
+
+    bookings = Booking.query.all()
+    return jsonify([b.serialize() for b in bookings])
+
+
 
 @booking_bp.route("/my-bookings", methods=["GET"])
 @jwt_required()
